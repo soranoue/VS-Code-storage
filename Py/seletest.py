@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
 import random
-import time
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,7 +20,7 @@ def fuck():
 
 for k in range(1,9999):
     print(f'第{k}组第0次开始')
-    wd = webdriver.Firefox(service=Service('E:\geckodriver.exe'))
+    wd = webdriver.Edge()
     wd.get(r'http://qq.qqiis.tech/wd/shoy.php')
     fuck()
     print(f'第{k}组第0次完成')
