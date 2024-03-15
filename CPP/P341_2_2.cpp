@@ -1,0 +1,92 @@
+#include "iostream"
+#include "iomanip"
+using namespace std;
+
+typedef int ElemType;
+struct LQNodeType{
+    ElemType data;
+    LQNodeType *next;
+};
+
+class LinkQueue{
+    private:
+        LQNodeType *front,*rear;
+    public:
+        LinkQueue();
+        ~LinkQueue();
+        int IsEmpty();
+        void Display();
+        ElemType GetFront();
+        void AddQ(ElemType e);
+        ElemType DelQ();
+};
+
+LinkQueue::LinkQueue(){
+    front=new LQNodeType;
+    rear=front;
+}
+
+LinkQueue::~LinkQueue(){
+    delete front;
+}
+
+int LinkQueue::IsEmpty(){
+    if(front==rear)
+        return 1;
+    else
+        return 0;
+}
+
+ElemType LinkQueue::GetFront(){
+    return front->next->data;
+}
+
+void LinkQueue::Display(){
+    LQNodeType *s;
+    if(IsEmpty()){cout<<"Queue is Empty! "<<endl;return;}
+    cout<<"Data elem: "<<endl;
+    s=front->next;
+    while(s!=NULL){
+        cout<<setw(6)<<s->data;
+        s=s->next;
+    }
+    cout<<endl;
+}
+
+void LinkQueue::AddQ(ElemType e){
+    LQNodeType *s=new LQNodeType;
+    s->data=e;
+    s->next=NULL;
+    rear->next=s;
+    rear=s;
+}
+
+ElemType LinkQueue::DelQ(){
+    LQNodeType *s;
+    ElemType e;
+    e=front->next->data;
+    s=front->next;
+    front->next=s->next;
+    if(s==rear)
+        rear=front;
+    delete s;
+    return e;
+}
+
+int main(){
+    LinkQueue sq;
+    ElemType e;
+    int length,i;
+    cout<<"Input length: "; cin>>length;
+    if(length<0) cout<<"length Error! "<<endl;
+    else{
+        cout<<"Input elem: "<<endl;
+        for(i=0;i<length;i++){
+            cin>>e;
+            sq.AddQ(e);
+        }
+        sq.Display();
+        cout<<"Front elem: "<<sq.GetFront()<<endl;
+    }
+    return 0;
+}
