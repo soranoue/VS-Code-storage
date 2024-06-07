@@ -117,7 +117,7 @@ void sha256(const unsigned char *data, size_t len, unsigned char *out) {
 
 int main()
 {
-    FILE *fp = fopen("C:/Users/soranoue/Downloads/h264enc_v2.0.zip", "rb");
+    FILE *fp = fopen("text.txt", "rb");
     long size;
     fseek(fp, 0, SEEK_END);
     size = ftell(fp);
