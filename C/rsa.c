@@ -217,74 +217,82 @@ int* decodeMessage(int len, int bytes, int* cryptogram, int exponent, int modulu
  * 系统降级的主要方法。 设置素数p，q，并开始编码和
  *解码“text.txt”中给出的消息；
  */
-int main(void) {
-    int p, q, n, phi, e, d, bytes, len;
-    int *encoded, *decoded;
-    char *buffer;
-    FILE *f;
-    srand(time(NULL));
-    while(1) {
-        p = randPrime(SINGLE_MAX);
-        printf("生成第一个随机素数, p = %d \n", p);
-       //getchar();
-
-        q = randPrime(SINGLE_MAX);
-        printf("生成第二个随机素数, q = %d \n", q);
+int main(int argc, char * argv[]) {
+    if(argc < 2) {
+        int p, q, n, phi, e, d, bytes, len;
+        int *encoded, *decoded;
+        char *buffer;
+        FILE *f;
+        srand(time(NULL));
+        while(1) {
+            p = randPrime(SINGLE_MAX);
+            printf("生成第一个随机素数, p = %d \n", p);
         //getchar();
 
-        n = p * q;
-        printf("计算p和q的乘积n, n = pq = %d \n", n);
-        if(n < 128) {
-            printf("Modulus is less than 128, cannot encode single bytes. Trying again \n\n");
+            q = randPrime(SINGLE_MAX);
+            printf("生成第二个随机素数, q = %d \n", q);
             //getchar();
+
+            n = p * q;
+            printf("计算p和q的乘积n, n = pq = %d \n", n);
+            if(n < 128) {
+                printf("Modulus is less than 128, cannot encode single bytes. Trying again \n\n");
+                //getchar();
+            }
+            else break;
         }
-        else break;
+        if(n >> 21) bytes = 3;
+        else if(n >> 14) bytes = 2;
+        else bytes = 1;
+        //getchar();
+
+        phi = (p - 1) * (q - 1);
+        printf("计算欧拉函数的值phi, phi = %d \n", phi);
+        //getchar();
+
+        e = randExponent(phi, EXPONENT_MAX);
+        printf("选取一个随机素数e, e = %d \n获得公钥 ( %d , %d ) \n", e, e, n);
+        //getchar();
+
+        d = inverse(e, phi);
+        printf("计算模反元素d, d = %d \n获得密钥 ( %d , %d ) \n", d, d, n);
+        //getchar();
+
+        printf("打开文件 \"text.txt\" 用于读取信息\n");
+        f = fopen("text.txt", "r");
+        if(f == NULL) {
+            printf("Failed to open file \"text.txt\". Does it exist?\n");
+            return EXIT_FAILURE;
+        }
+        len = readFile(f, &buffer, bytes); /* len will be a multiple of bytes, to send whole chunks伦将是多个字节，以发送整个块 */
+        fclose(f);
+
+        printf("文件 \"text.txt\" 读取成功, 读取到 %d 字节. 以 %d 字节的字节流编码 \n", len, bytes);
+        //getchar();
+        printf("加密得密文为：\n");
+        encoded = encodeMessage(len, bytes, buffer, e, n);
+        printf("\n编码成功完成 \n");
+        //getchar();
+
+
+        printf("正在解码编码的信息 ... ");
+        //getchar();
+        printf("解码得明文为：\n");
+        decoded = decodeMessage(len/bytes, bytes, encoded, d, n);
+
+
+        printf("\nRSA算法演示完成!\n");
+
+        free(encoded);
+        free(decoded);
+        free(buffer);
+        return EXIT_SUCCESS;
     }
-    if(n >> 21) bytes = 3;
-    else if(n >> 14) bytes = 2;
-    else bytes = 1;
-    //getchar();
-
-    phi = (p - 1) * (q - 1);
-    printf("计算欧拉函数的值phi, phi = %d \n", phi);
-    //getchar();
-
-    e = randExponent(phi, EXPONENT_MAX);
-    printf("选取一个随机素数e, e = %d \n获得公钥 ( %d , %d ) \n", e, e, n);
-    //getchar();
-
-    d = inverse(e, phi);
-    printf("计算模反元素d, d = %d \n获得密钥 ( %d , %d ) \n", d, d, n);
-    //getchar();
-
-    printf("打开文件 \"text.txt\" 用于读取信息\n");
-    f = fopen("text.txt", "r");
-    if(f == NULL) {
-        printf("Failed to open file \"text.txt\". Does it exist?\n");
-        return EXIT_FAILURE;
+    else {
+        char * InputPath = argv[1];
+        int exp,mod;
+        if(strcmp(argv[2], "e") == 0);
+        if(strcmp(argv[2], "d") == 0);
     }
-    len = readFile(f, &buffer, bytes); /* len will be a multiple of bytes, to send whole chunks伦将是多个字节，以发送整个块 */
-    fclose(f);
-
-    printf("文件 \"text.txt\" 读取成功, 读取到 %d 字节. 以 %d 字节的字节流编码 \n", len, bytes);
-    //getchar();
-    printf("加密得密文为：\n");
-    encoded = encodeMessage(len, bytes, buffer, e, n);
-    printf("\n编码成功完成 \n");
-    //getchar();
-
-
-    printf("正在解码编码的信息 ... ");
-    //getchar();
-    printf("解码得明文为：\n");
-    decoded = decodeMessage(len/bytes, bytes, encoded, d, n);
-
-
-    printf("\nRSA算法演示完成!\n");
-
-    free(encoded);
-    free(decoded);
-    free(buffer);
-    return EXIT_SUCCESS;
 }
 
