@@ -301,6 +301,11 @@ int main(void) {
     //getchar();
     printf("解码得明文为：\n");
     decoded = decodeMessage(len/bytes, bytes, encoded_t, d, n);
+    fopen("text_t.txt", "w");
+    for(int i = 0; i < len; i++) {
+        if(decoded[i] != '\0') fprintf(f, "%c", decoded[i]);
+    }
+    fclose(f);
 
     printf("\nRSA算法演示完成!\n");
 
